@@ -13,7 +13,7 @@
 <body>
 <div class="login-form">
 			<div class="top-login">
-				<span><img src="images/2.png" alt=""/></span>
+				<span><img src="images/logo.png" alt=""/></span>
 			</div>
 			<h1>注册</h1>
 			<div class="login-top">
@@ -21,13 +21,13 @@
 		<form action="signup" name="form2" method="post">
 				<div class="login-ic"> 
 					<i ></i>
-					<input type="text" name="username"  value="用户名" onFocus="this.value = '';" onBlur="if (this.value == '') {this.value = 'User name';}"/>
+					<input type="text" name="username"  value="User name" onFocus="this.value = '';" onBlur="if (this.value == '') {this.value = 'User name';}"/>
 			
 					<div class="clear"> </div>
 				</div>
 				<div class="login-ic">
 					<i class="icon"></i>
-					<input type="password" name="password" value="密码" onFocus="this.value = '';" onBlur="if (this.value == '') {this.value = 'password';}"/>
+					<input type="password" name="password" value="password" onFocus="this.value = '';" onBlur="if (this.value == '') {this.value = 'password';}"/>
 					<div class="clear"> </div>
 				</div>
 			

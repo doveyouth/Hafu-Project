@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+<!-- 没有Hibernate配置文件 -->
+	<!-- 连接池信息 -->
+	<!-- 引入外部属性文件. -->
+	<context:property-placeholder location="classpath:jdbc.properties"/>
+	
+	<!-- 配置c3p0连接池 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driver}"/>
+		<property name="jdbcUrl" value="${jdbc.url}"/>
+		<property name="user" value="${jdbc.user}"/>
+		<property name="password" value="${jdbc.password}"/>
+	</bean>
+	
+	<!-- 零障碍整合 在spring配置文件中引入hibernate的配置文件 -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<!-- 管理连接池 -->
+		<property name="dataSource" ref="dataSource"/>
+		<!-- 配置Hibernate的属性 -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.connection.autocommit">false</prop>
+			</props>
+		</property>
+		
+		<!-- 加载映射 -->
+		 <property name="mappingResources">
+			<list>
+				<value>com/hafu/domain/HafuGoodComment.hbm.xml</value>
+				<value>com/hafu/domain/HafuOrderComment.hbm.xml</value>
+				<value>com/hafu/domain/HafuOrderGoodComment.hbm.xml</value>
+				<value>com/hafu/domain/HafuStoreComment.hbm.xml</value>
+				<value>com/hafu/domain/HafuUserComment.hbm.xml</value>
+				<value>com/hafu/domain/HafuUserProfileComment.hbm.xml</value>
+			</list>
+		</property> 
+	</bean>
+	
+	<!-- 配置Action -->
+	<bean id="com.hafu.action.LoginAction" class="com.hafu.action.LoginAction" scope="prototype"/>
+	<bean id="com.hafu.action.SignupAction" class="com.hafu.action.SignupAction" scope="prototype"/>
+	
+	<!-- Service的配置 -->
+	<bean id="hafuGoodService" class="com.hafu.service.impl.HafuGoodServiceImpl">
+	<property name="hafuGoodDao" ref="hafuGoodDao"/>
+	</bean>
+	<bean id="hafuOrderService" class="com.hafu.service.impl.HafuOrderServiceImpl">
+	<property name="hafuOrderDao" ref="hafuOrderDao"/>
+	</bean>
+	<bean id="hafuOrderGoodService" class="com.hafu.service.impl.HafuOrderGoodServiceImpl">
+	<property name="hafuOrderGoodDao" ref="hafuOrderGoodDao"/>
+	</bean>
+	<bean id="hafuStoreService" class="com.hafu.service.impl.HafuStoreServiceImpl">
+	<property name="hafuStoreDao" ref="hafuStoreDao"/>
+	</bean>
+	<bean id="hafuUserProfileService" class="com.hafu.service.impl.HafuUserProfileServiceImpl">
+	<property name="hafuUserProfileDao" ref="hafuUserProfileDao"/>
+	</bean>
+	
+	<!-- DAO的配置 -->
+	<bean id="hafuGoodDao" class="com.hafu.dao.impl.HafuGoodDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<bean id="hafuOrderDao" class="com.hafu.dao.impl.HafuOrderDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<bean id="hafuOrderGoodDao" class="com.hafu.dao.impl.HafuOrderGoodDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<bean id="hafuStoreDao" class="com.hafu.dao.impl.HafuStoreDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<bean id="hafuUserProfileDao" class="com.hafu.dao.impl.HafuUserProfileDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<!-- 管理事务 -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<!-- 注解开启事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+</beans>
